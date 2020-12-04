@@ -31,25 +31,31 @@
 
         .heading {
             padding: 20px;
-            font-size: 18px;
+            font-size: 22px;
             height: 90px;
-            font-family: 'Sofia';
+         
             text-align: center;
             width: 100%;
             background: rgb(33, 33, 75);
             color: white;
         }
 
-        .heading2 {
-            padding: 15px;
-            width: 100%;
-           
-            font-size: 12px;
-            height: 70px;
-            text-align: center;
-            background: rgb(84, 202, 202);
-            color: white;
-        }
+        .container-fluid {
+    background-color: teal;
+    margin: auto;
+    padding: 0px;
+}
+
+
+.container {
+    text-align: justify;
+    align-content: center;
+    padding-top: 30px;
+    padding-bottom: 30px;
+    color: white;
+    height: 40%;
+    width: 50%;
+}
 
         .main {
             width: 100%;
@@ -122,18 +128,26 @@
         {
             position:relative; text-align: center;  padding: 15px;  border: 0px;
     
-    border-radius: 5px 5px 10px 10px; background-color: rgb(185, 185, 43);
+    border-radius: 10px 10px 10px 10px; background-color: rgb(185, 185, 43);
         }
 
 
-      
+        .correct {
+            color: green;
+        }
+
+        .incorrect {
+            color: rgb(230, 14, 14);
+            text-decoration: underline;
+        }
+
         .input_box {
             background-color: white;
             font-weight: bold;
             height: 8rem;
-            width: 50%;
-            font-size: 1.2rem;
-            font-weight: 500;
+            width: 40%;
+            font-size: 1.5rem;
+            font-weight: 600;
             margin: 10px;
             padding: 15px;
             border: 0px;
@@ -152,14 +166,11 @@
     </div>
 
 
-    <div class="heading2">
-
-        <p> This is a typing test. Your goal is to duplicate the provided test,EXACTLY,
-            in the field below.The
-            timer
-            starts when you start typing,and only stops
-            when you match this text exactly.Good Luck! </p>
-    </div>
+    <div class="container-fluid">
+        <div class="container">
+          <p id="quote">Sometimes that is just the way it has to be.Sure, there were probably other options,but he did not let them enter his mind. It was done and that was that. It was just the way it had to be.</p>
+        </div>
+      </div>
     
     <div class="quotehead " >
         <div class="quote-display" id="quotedisplay"> </div>
@@ -179,8 +190,99 @@
 
 </body>
 
-<script src="typingmaster.js">
+<script>
 
+    const RANDOM_QUOTE_API_URL = 'https://api.quotable.io/random'
+    const quoteDisplayElement = document.getElementById('quotedisplay');
+    const quoteInputElement = document.getElementById('quoteInputElement');
+    const restart = document.getElementById('restart').value;
+    const timer = document.getElementById('timer')
+    var sec = timer;
+    var set;
+    var p;
+
+    function getRandomQuote() {
+
+
+
+        return fetch(RANDOM_QUOTE_API_URL).then(response => response.json())
+            .then(data => data.content)
+    }
+
+    async function getNextQuote() {
+        const quote = await getRandomQuote()
+        console.log(quote)
+
+        quoteDisplayElement.innerHTML = quote;
+
+        const wordSpan = quoteDisplayElement.innerText.split(' ');
+
+
+        p = wordSpan.length;
+        console.log(p)
+
+
+        quoteInputElement.value = null;
+
+    }
+
+
+    getNextQuote()
+
+    function match() {
+
+        if (quoteInputElement.value == 0) {
+            start()
+        }
+        else {
+            if (quoteDisplayElement.innerText == quoteInputElement.value) {
+                alert('matched')
+                console.log(set)
+                clearInterval(set)
+                timer.textContent = '0'
+
+                getNextQuote()
+
+            }
+        }
+
+    }
+
+
+    function wpm() {
+        match()
+        console.log(p)
+    }
+
+    let startTime
+    function start() {
+        timer.innerHTML = 0;
+        startTime = new Date();
+        set = setInterval(() => {
+
+            timer.innerText = getTimertime()
+            console.log(timer)
+        }, 1000)
+
+
+    }
+
+    function getTimertime() {
+        return Math.floor((new Date - startTime) / 1000)
+    }
+
+
+    function restartGame() {
+        console.log(quoteInputElement)
+        quoteInputElement.value = null;
+        getNextQuote()
+        match()
+        console.log(set)
+        clearInterval(set)
+        timer.textContent = '0';
+    }
+
+    document.getElementById("quoteInputElement").addEventListener("keypress", match);
 
 </script>
 
